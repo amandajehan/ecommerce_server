@@ -12,15 +12,30 @@ class ProductController {
 		}
 	}
 
+	static async showById(req, res, next) {
+		try {
+			const id = +req.params.id
+			const product = await Product.findByPk(id)
+
+			res.status(200).json(product)
+			
+		} catch(err) {
+			next(err)
+		}
+	}
+
 	static async create(req, res, next) {
 		try {
-			const { name, image_url, price, stock } = req.body
+			const userId = req.loggedInUser.id
+			const { name, image_url, price, stock, category } = req.body
 
 			const newProduct = await Product.create({
 				name,
 				image_url,
 				price,
-				stock
+				stock,
+				category,
+				userId
 			})
 
 			res.status(201).json({
@@ -28,7 +43,9 @@ class ProductController {
 				name: newProduct.name,
 				image_url: newProduct.image_url,
 				price: newProduct.price,
-				stock: newProduct.stock
+				stock: newProduct.stock,
+				category: newProduct.category,
+				userId: userId
 			})
 
 		} catch(err) {
@@ -39,12 +56,13 @@ class ProductController {
 	static async update(req, res, next) {
 		try {
 			const id = +req.params.id
-			const { name, image_url, price, stock } = req.body
+			const { name, image_url, price, stock, category } = req.body
 			const updatedProduct = await Product.update({
 				name,
 				image_url,
 				price,
-				stock
+				stock,
+				category
 			},{
 				where: { id }, returning: true })
 				

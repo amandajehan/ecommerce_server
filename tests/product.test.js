@@ -5,13 +5,14 @@ const { signToken } = require('../helpers/jwt.js')
 const { sequelize } = require('../models')
 const { queryInterface } = sequelize
 
-let access_token = ''
+let token = ''
 
 let productData = {
 	name: 'Realme 7 Smartphone',
 	image_url: 'shorturl.at/nwxKQ',
 	price: 4000000,
-	stock: 50
+	stock: 50,
+	category: 'gadget'
 }
 
 let productId = null
@@ -35,13 +36,13 @@ beforeAll(function (done) {
 				email: user.email,
 			}
 			userData.role = user.role
-			access_token = signToken(payload, 'secret')
-
+			token = signToken(payload, 'secret')
 			return Product.create({
 				name: 'iPhone',
 				image_url: 'shortutl.at/wkjedl',
 				price: 9000000,
-				stock: 5
+				stock: 5,
+				category: 'gadget'
 			})
 
 		})
@@ -67,12 +68,12 @@ afterAll(function (done) {
 
 describe('Endpoint Test POST /products', () => {
 	//Test Case #1 - Create a Product success
-	it('Success Case: Create Product Test - should return an object with keys: id, name, image_url, price, stock', (done) => {
+	it('Success Case: Create Product Test - should return an object with keys: id, name, image_url, price, stock, category', (done) => {
 		request(app)
 			.post('/products')
 			.send(productData)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -82,6 +83,7 @@ describe('Endpoint Test POST /products', () => {
 				expect(res.body).toHaveProperty('image_url', productData.image_url)
 				expect(res.body).toHaveProperty('price', productData.price)
 				expect(res.body).toHaveProperty('stock', productData.stock)
+				expect(res.body).toHaveProperty('category', productData.category)
 				done()
 			})
 			.catch(err => {
@@ -96,10 +98,11 @@ describe('Endpoint Test POST /products', () => {
 			.send({
 				image_url: productData.image_url,
 				price: productData.price,
-				stock: productData.stock
+				stock: productData.stock,
+				category: productData.category
 			})
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -121,10 +124,11 @@ describe('Endpoint Test POST /products', () => {
 			.send({
 				name: productData.name,
 				price: productData.price,
-				stock: productData.stock
+				stock: productData.stock,
+				category: productData.category
 			})
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -146,10 +150,11 @@ describe('Endpoint Test POST /products', () => {
 			.send({
 				name: productData.name,
 				image_url: productData.image_url,
-				stock: productData.stock
+				stock: productData.stock,
+				category: productData.category
 			})
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -172,9 +177,10 @@ describe('Endpoint Test POST /products', () => {
 				name: productData.name,
 				image_url: productData.image_url,
 				price: productData.price,
+				category: productData.category
 			})
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -189,7 +195,7 @@ describe('Endpoint Test POST /products', () => {
 			})
 	})
 
-	//Test Case #6 - Create a Product failed due to no access_token
+	//Test Case #6 - Create a Product failed due to no token
 	it('Error Case: Create Product Test - No access token', (done) => {
 		request(app)
 			.post('/products')
@@ -216,7 +222,7 @@ describe('Endpoint Test POST /products', () => {
 			.post('/products')
 			.send(productData)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -240,10 +246,11 @@ describe('Endpoint Test POST /products', () => {
 				name: productData.name,
 				image_url: productData.image_url,
 				price: -5000,
-				stock: productData.stock
+				stock: productData.stock,
+				category: productData.category
 			})
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -266,10 +273,11 @@ describe('Endpoint Test POST /products', () => {
 				name: productData.name,
 				image_url: productData.image_url,
 				price: productData.price,
-				stock: -5
+				stock: -5,
+				category: productData.category
 			})
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -292,10 +300,11 @@ describe('Endpoint Test POST /products', () => {
 				name: productData.name,
 				image_url: productData.image_url,
 				price: productData.price,
-				stock: 'lima'
+				stock: 'lima',
+				category: productData.category
 			})
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -318,14 +327,15 @@ describe('Endpoint Test POST /products', () => {
 				name: productData.name,
 				image_url: productData.image_url,
 				price: 'lima juta',
-				stock: productData.stock
+				stock: productData.stock,
+				category: productData.category
 			})
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
-				const errors = ['price must be in integer']
+				const errors = ['price must be in number']
 				expect(res.status).toEqual(400)
 				expect(res.body).toHaveProperty('errors', expect.any(Array))
 				expect(res.body.errors).toEqual(errors)
@@ -335,22 +345,50 @@ describe('Endpoint Test POST /products', () => {
 				done(err)
 			})
 	})
+
+	//Test Case #12 - Create a Product failed due to missing required field category
+	it('Error Case: Create Product Test - Missing required category', (done) => {
+		request(app)
+		.post('/products')
+		.send({
+			name: productData.name,
+			image_url: productData.image_url,
+			price: productData.price,
+			stock: productData.stock,
+		})
+		.set({
+			'token': token,
+			'role': userData.role
+		})
+		.then(res => {	
+			const errors = ['category cannot be null']
+			expect(res.status).toEqual(400)
+			expect(res.body).toHaveProperty('errors', expect.any(Array))
+			expect(res.body.errors).toEqual(errors)
+			done()
+		})
+		.catch(err => {
+			done(err)
+		})
+	})
+
 })
 
 describe('Endpoint Test PUT /products/:id', () => {
-	// 	//Test Case #1 - Update a Product success
-	it('Success Case: Update Product Test - should return an object with keys: name, image_url, price, stock', (done) => {
+	//Test Case #1 - Update a Product success
+	it('Success Case: Update Product Test - should return an object with keys: name, image_url, price, stock, category', (done) => {
 		const updatedProduct = {
 			name: 'Samsung X',
 			image_url: 'shorturl.at/ijnEQ',
 			price: 3000000,
-			stock: 10
+			stock: 10,
+			category: 'tech'
 		}
 		request(app)
 			.put(`/products/${productId}`)
 			.send(updatedProduct)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -359,6 +397,7 @@ describe('Endpoint Test PUT /products/:id', () => {
 				expect(res.body).toHaveProperty('image_url', updatedProduct.image_url)
 				expect(res.body).toHaveProperty('price', updatedProduct.price)
 				expect(res.body).toHaveProperty('stock', updatedProduct.stock)
+				expect(res.body).toHaveProperty('category', updatedProduct.category)
 				done()
 			})
 			.catch(err => {
@@ -366,13 +405,14 @@ describe('Endpoint Test PUT /products/:id', () => {
 			})
 	})
 
-	// 	//Test Case #2 - Update a Product failed due to no access token
+	//Test Case #2 - Update a Product failed due to no token
 	it('Error Case: Update Product Test - No access token', (done) => {
 		const updatedProduct = {
 			name: 'Samsung X',
 			image_url: 'shorturl.at/ijnEQ',
 			price: 3000000,
-			stock: 10
+			stock: 10,
+			category: 'tech'
 		}
 
 		request(app)
@@ -393,13 +433,14 @@ describe('Endpoint Test PUT /products/:id', () => {
 			})
 	})
 
-	// 	//Test Case #3 - Update a Product failed due to role not as an admin
+		//Test Case #3 - Update a Product failed due to role not as an admin
 	it('Error Case: Update Product Test - Role is not admin', (done) => {
 		const updatedProduct = {
 			name: 'Samsung X',
 			image_url: 'shorturl.at/ijnEQ',
 			price: 3000000,
-			stock: 10
+			stock: 10,
+			category: 'tech'
 		}
 		userData.role = 'customer'
 
@@ -407,7 +448,7 @@ describe('Endpoint Test PUT /products/:id', () => {
 			.put(`/products/${productId}`)
 			.send(updatedProduct)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -428,7 +469,8 @@ describe('Endpoint Test PUT /products/:id', () => {
 			name: 'Samsung X',
 			image_url: 'shorturl.at/ijnEQ',
 			price: 3000000,
-			stock: 'sepuluh'
+			stock: 'sepuluh',
+			category: 'tech'
 		}
 		userData.role = 'admin'
 
@@ -436,7 +478,7 @@ describe('Endpoint Test PUT /products/:id', () => {
 			.put(`/products/${productId}`)
 			.send(updatedProduct)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -451,13 +493,14 @@ describe('Endpoint Test PUT /products/:id', () => {
 			})
 	})
 
-	// 	//Test Case #5 - Update a Product failed due to input price is minus
+		//Test Case #5 - Update a Product failed due to input price is minus
 	it('Error Case: Update Product Test - Price is minus', (done) => {
 		const updatedProduct = {
 			name: 'Samsung X',
 			image_url: 'shorturl.at/ijnEQ',
 			price: -3000000,
-			stock: 10
+			stock: 10,
+			category: 'tech'
 		}
 		userData.role = 'admin'
 
@@ -465,7 +508,7 @@ describe('Endpoint Test PUT /products/:id', () => {
 			.put(`/products/${productId}`)
 			.send(updatedProduct)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -480,20 +523,21 @@ describe('Endpoint Test PUT /products/:id', () => {
 			})
 	})
 
-	// 	//Test Case #6 - Update a Product failed due to input stock is minus
+		//Test Case #6 - Update a Product failed due to input stock is minus
 	it('Error Case: Update Product Test - Stock is minus', (done) => {
 		const updatedProduct = {
 			name: 'Samsung X',
 			image_url: 'shorturl.at/ijnEQ',
 			price: 3000000,
-			stock: -100
+			stock: -100,
+			category: 'tech'
 		}
 
 		request(app)
 			.put(`/products/${productId}`)
 			.send(updatedProduct)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -514,7 +558,7 @@ describe('Endpoint Test DELETE /products', () => {
 		request(app)
 			.delete(`products/${productId}`)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {
@@ -550,7 +594,7 @@ describe('Endpoint Test DELETE /products', () => {
 		request(app)
 			.delete(`products/${productId}`)
 			.set({
-				'access_token': access_token,
+				'token': token,
 				'role': userData.role
 			})
 			.then(res => {

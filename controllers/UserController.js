@@ -22,7 +22,7 @@ class UserController {
 				throw { name: 'InvalidEmailPassword' }
 
 			} else {
-				const access_token = signToken({
+				const token = signToken({
 					id: user.id,
 					email: user.email,
 				})
@@ -30,7 +30,7 @@ class UserController {
 				res.status(200).json({
 					message: 'login success',
 					email: user.email,
-					access_token,
+					token,
 					role: user.role
 				})
 			}

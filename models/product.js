@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Product.belongsTo(models.User, { foreignKey: 'userId' })
     }
   };
   Product.init({
@@ -42,14 +42,14 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     price: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
       allowNull: false,
       validate: {
         notEmpty: {
           msg: 'price is required'
         },
-        isInt: {
-          msg: 'price must be in integer'
+        isNumeric: {
+          msg: 'price must be in number'
         },
         notNull: {
           msg: 'price cannot be null'
@@ -78,6 +78,19 @@ module.exports = (sequelize, DataTypes) => {
           if (value < 0) {
             throw new Error ('stock must not less than or equal to zero, or minus')
           }
+        }
+      }
+    },
+    userId: DataTypes.INTEGER,
+    category: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'category is required'
+        },
+        notNull: {
+          msg: 'category cannot be null'
         }
       }
     }

@@ -3,12 +3,12 @@ const { User } = require('../models')
 
 async function authentication(req, res, next) {
 	try {
-		const { access_token, role } = req.headers
-		
-		if(!access_token) {
+		const { token, role } = req.headers
+		if(!token) {
+			console.log('gaada token')
 			throw { name: 'AuthenticationFailed' }
 		} else {
-			const decoded = verifyToken(access_token)
+			const decoded = verifyToken(token)
 
 			const user = await User.findOne({
 				where: {

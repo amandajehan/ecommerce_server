@@ -18,19 +18,29 @@ Status: 200 OK
 ```
 json
 {
-	message: 'login is success',
-	email: 'amandajehan@gmail.com',
-	access_token: 'eyeskjehslerawioderjlwa',
-	role: 'admin'
+  "message": "login success",
+  "email": "admin@mail.com",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTYwNTMyODU3Mn0.VHlkddMB55MKmUPV1WXsje2ekP_6gnwn9nj981vOeJE",
+  "role": "admin"
 }
 ```
 
 ### Error Response:
 Status: 400 
+
 ```
 json
 {
-	error: " "
+	error: "invalid email / password"
+}
+```
+
+Or
+
+```
+json
+{
+	error: "e-mail and password are required"
 }
 ```
 
@@ -46,7 +56,14 @@ json
 
 ### Request:
 ```
-
+axios({
+  url: '/login',
+  method: 'POST',
+  data: {
+    email: payload.email,
+    password: payload.password
+  }
+})
 ```
 
 
@@ -69,21 +86,33 @@ None
 Status: 200 OK
 ```
 json 
-{
-  "id": 1,
-	"name": "Smartphone",
-	"image_url": "",
-	"price": 3000000,
-	"stock": 10,
-  "createdAt": "2020-11-03T17:19:19.799Z",
-  "updatedAt": "2020-11-03T17:25:00.578Z"
-}
+[
+  {
+    "id": 1,
+    "name": "PlayStation 5",
+    "image_url": "https://gmedia.playstation.com/is/image/SIEPDC/playstation-5-with-dualsense-front-product-shot-01-ps5-en-30jul20?$native--t$",
+  	"price": 700000,
+    "stock": 4,
+    "userId": 1,
+    "category": "game",
+  },
+  {
+    "id": 2,
+    "name": "TV Samsung",
+    "image_url": "https://static.bmdstatic.com/pk/product/medium/5ea1502a916fc.jpg",
+    "price": 10000000,
+    "stock": 10,
+    "userId": 1,
+    "category": "gadget",
+    }
+]
 ```
 
 ### Error Response
 Status: 404 Not Found
 ```
-json {
+json 
+{
 	error: "Not found"
 }
 ```
@@ -101,7 +130,14 @@ json
 
 ### Request:
 ```
-
+axios({
+  url: '/products',
+  method: 'GET',
+  headers: {
+    token,
+    role
+  }
+})
 ```
 
 # Create New Product
@@ -117,10 +153,12 @@ To create a new product, returns json data about a new product
 None
 
 ### Data Params:
-`name = [string]`
-`image_url = [string]`
-`price = [integer]`
-`stock = [integer]`
+`name = [string]`,
+`image_url = [string]`,
+`price = [double]`,
+`stock = [integer]`,
+`category = [string]`,
+`userId = [integer]`
 
 
 ### Success Response:
@@ -128,13 +166,13 @@ Status: 201 Created
 ```
 json 
 {
-  "id": 1,
-	"name": "Smartphone",
-	"image_url": "",
-	"price": 3000000,
-	"stock": 10,
-  "createdAt": "2020-11-03T17:19:19.799Z",
-  "updatedAt": "2020-11-03T17:25:00.578Z"
+  "id": 3,
+  "name": "Macbook",
+  "image_url": "https://i.gadgets360cdn.com/products/laptops/large/1546457015_635_apple_macbook-air-mrea2hn-a.jpg",
+  "price": 1500000,
+  "stock": 5,
+  "category": "gadget",
+  "userId": 1
 }
 ```
 
@@ -142,7 +180,7 @@ json
 Status: 400 Bad Request
 ```
 json {
-	error: "name is required, image_url is required, price is required, stock is required"
+	error: "name is required, image_url is required, price is required, stock is required, category is required"
 }
 ```
 
@@ -158,7 +196,21 @@ json
 
 ### Request
 ```
-
+axios({
+  url: '/products',
+  method: 'POST',
+  data: {
+    name: payload.name,
+    image_url: payload.image_url,
+    price: payload.price,
+    stock: payload.stock,
+		category: payload.category
+  },
+  headers: {
+  	token,
+    role
+  }
+})
 ```
 
 
@@ -175,10 +227,11 @@ User with role admin can update all fields of a Product, returns updated json da
 Required: `id: [integer]`
 
 ### Data Params:
-`name = [string]`
-`image_url = [string]`
-`price = [integer]`
-`stock = [integer]`
+`name = [string]`,
+`image_url = [string]`,
+`price = [double]`,
+`stock = [integer]`,
+`category = [string]`
 
 ### Success Response:
 Status: 200 OK
@@ -186,12 +239,12 @@ Status: 200 OK
 json 
 {
   "id": 1,
-	"name": "Computer",
-	"image_url": "",
-	"price": 5000000,
-	"stock": 5,
-  "createdAt": "2020-11-03T17:19:19.799Z",
-  "updatedAt": "2020-11-03T17:25:00.578Z"
+  "name": "PlayStation 5",
+  "image_url": "https://gmedia.playstation.com/is/image/SIEPDC/playstation-5-with-dualsense-front-product-shot-01-ps5-en-30jul20?$native--t$",
+  "price": 700000,
+  "stock": 4,
+  "userId": 1,
+  "category": "game",
 }
 ```
 
@@ -199,7 +252,7 @@ json
 Status: 400 Bad Request
 ```
 json {
-	error: "name is required, image_url is required, price is required, stock is required"
+	error: "name is required, image_url is required, price is required, stock is required, category is required"
 }
 ```
 
@@ -225,7 +278,20 @@ json
 
 ### Request:
 ```
-
+axios({
+  url: `/products/${payload.id}`,
+  method: 'PUT',
+  data: {
+    name: payload.name,
+    image_url: payload.image_url,
+    price: payload.price,
+    stock: payload.stock
+  },
+  headers: {
+    token,
+    role
+  }
+})
 ```
 
 
@@ -249,7 +315,7 @@ Status: 200 OK
 ```
 json
 {
-	message: "product is deleted successfully."
+	message: "delete product success"
 }
 ```
 
@@ -274,5 +340,12 @@ json
 
 ### Request:
 ```
-
+axios({
+  url: `/products/${id}`,
+  method: 'DELETE',
+  headers: {
+    token,
+    role
+  }
+})
 ```
