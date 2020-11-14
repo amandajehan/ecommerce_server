@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit --runInBand --verbose",
-    "dev": "nodemon bin/http",
     "start": "node app.js"
   },
   "repository": {
