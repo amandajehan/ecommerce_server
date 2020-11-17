@@ -1,3 +1,69 @@
+# Register User (customer)
+Register for user customer
+
+### URL:
+`/register`
+
+### Method:
+`POST`
+
+### URL Params:
+None
+
+### Data Params:
+None
+
+### Success Response:
+Status: 201 Created
+```
+json
+{
+  "id": 1,
+  "email": "admin@mail.com"
+}
+```
+
+### Error Response:
+Status: 400 
+
+```
+json
+{
+	error: "invalid email / password"
+}
+```
+
+Or
+
+```
+json
+{
+	error: "e-mail and password are required"
+}
+```
+
+Or
+
+Status: 500 Internal Server Error
+```
+json
+{
+	error: "Internal Server Error"
+}
+```
+
+### Request:
+```
+axios({
+  url: '/login',
+  method: 'POST',
+  data: {
+    email: payload.email,
+    password: payload.password
+  }
+})
+```
+
 # Login User
 Login for existing user, returns an access token
 

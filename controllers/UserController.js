@@ -3,6 +3,26 @@ const { comparePassword } = require('../helpers/bcrypt.js')
 const { signToken } = require('../helpers/jwt.js')
 
 class UserController {
+	static async register(req, res, next) {
+		try {
+			const { email, password } = req.body
+			const user = await User.create({
+				email, 
+				password, 
+			})
+			
+			console.log('user is successfully registered')
+
+			res.status(201).json({
+				id: user.id,
+				email: user.email
+			})
+
+		} catch(err) {
+			next(err)
+		}
+	}
+
 	static async login(req, res, next) {
 		try {
 			const { email, password } = req.body
