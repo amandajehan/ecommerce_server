@@ -18,6 +18,10 @@ module.exports = function (err, req, res, next) {
 				status = 400
 				errors.push('e-mail and password are required')
 				break;
+			case 'NotEnoughStock':
+				status = 400
+				errors.push('not enough stock')
+				break;
 			case 'AuthenticationFailed':
 				status = 401
 				errors.push('authentication failed')
@@ -25,6 +29,10 @@ module.exports = function (err, req, res, next) {
 			case `AuthorizationFailed`:
 				status = 403
 				errors.push('authorization failed')
+				break;
+			case 'NotFound':
+				status = 404
+				errors.push('not found')
 				break;
 			default:
 				status = 500

@@ -89,7 +89,9 @@ class ProductController {
 
 	static async showProducts(req, res, next) {
 		try {
-			const products = await Product.findAll()
+			const products = await Product.findAll({
+				order: [['createdAt', 'DESC']]
+			})
 
 			res.status(200).json(products)
 

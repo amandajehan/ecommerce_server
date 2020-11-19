@@ -11,18 +11,20 @@ router.post('/login', UserController.login)
 
 // show all products in home customer page
 router.get('/home', ProductController.showProducts)
+router.get('/banners', BannerController.showAll)
+
 
 router.use(authentication)
 
 // carts routing
 router.get('/cart', CartController.showAll)
+router.get('/history', CartController.showHistory)
 router.post('/cart', CartController.add)
 router.patch('/cart', CartController.checkout)
 router.patch('/cart/:id', CartController.update)
 router.delete('/cart/:id', CartController.delete)
 // products and banners routing 
 router.get('/products', ProductController.showAll)
-router.get('/banners', BannerController.showAll)
 
 router.get('/products/:id', ProductController.showById)
 router.get('/banners/:id', BannerController.showById)
