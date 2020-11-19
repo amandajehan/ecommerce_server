@@ -108,7 +108,7 @@ static async showHistory(req, res, next) {
 			if(currentStock < quantity) {
 				throw { name: 'NotEnoughStock' }
 
-			} else {
+			} else if (currentStock >= quantity) {
 				const updatedCart = await Cart.update({
 					quantity
 				}, {
@@ -144,17 +144,11 @@ static async showHistory(req, res, next) {
 	static async checkout(req, res, next) {
 		try {
 			const status = true //checked out
-			await Cart.update({
-				status
-			}, {
-				where: {
-					userId: req.loggedInUser.id
-				}
-			})
 
 			const carts = await Cart.findAll({
 				where: {
-					userId: req.loggedInUser.id
+					userId: req.loggedInUser.id,
+					status: false
 				},
 				include: [Product]
 			})
@@ -174,6 +168,14 @@ static async showHistory(req, res, next) {
 					.catch(err => {
 						console.log(err)
 					})
+			})
+
+			await Cart.update({
+				status
+			}, {
+				where: {
+					userId: req.loggedInUser.id
+				}
 			})
 
 			res.status(200).json({ msg: 'checkout success' })

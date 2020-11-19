@@ -19,6 +19,7 @@ class UserController {
 			})
 
 		} catch(err) {
+			console.log(err, '<<< DI CONTROLLER')
 			next(err)
 		}
 	}
